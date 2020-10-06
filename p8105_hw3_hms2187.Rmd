@@ -63,3 +63,24 @@ instacart %>%
   )
 ```
 
+## Problem 2
+
+Loading and tidying data
+
+```{r}
+accel_df = read.csv("./data/accel_data.csv") %>% 
+  janitor::clean_names()
+```
+
+part 1 also gonna pivot minute of day, make sure its numeric I think?
+
+gonna be more group_by and summary for pt 2. for day of week as column it may start as alphabetical order, so use factor to order correctly
+
+part3: get minute on x axis and activity count on y axis, then add in scatterplot and geom_line, use color for day of the week. conclusions will probably show stuff about how we sleep at night, active in day, maybe differences by weekday vs weekend
+
+## Problem 3
+
+gonna use count and rank for third sentence of part 1.
+part 2 organize data using group_by station, year, month, and summarize by month(?), also gonna need to filter. use facet to make 2 panel plot. trends could look like global warming!
+
+part 3 make 2 plots separate and then use patchwork to pull them together. first one should be contour/bin/or hex plot not scatter plot. second plot should be filter step, then showuse violin, box, or ridge plot showing one box per year
