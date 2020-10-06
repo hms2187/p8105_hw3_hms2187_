@@ -1,9 +1,52 @@
 ---
-title: "Homework 2"
+title: "Homework 3"
 author: "Henry Stoddard"
 date: "9/24/2020"
 output: github_document
 ---
 ## Problem 0
 Creating initial markdown file and rendering to github doc
+
+## Problem 1
+```{r}
+library(tidyverse)
+library(p8105.datasets)
+data("instacart")
+```
+
+This dataset contains `r nrow(instacart)` rows and ... columns.
+Observations are the level of items in orders by user. There are user / order variables -- user ID, order ID, order day, and order hour. There are also item variables - name, asile, department, and some numeric codes.
+
+How many aisles and which are most items from?
+
+```{r}
+instacart %>% count(aisle) %>% arrange(desc(n))
+```
+
+Making a plot!
+```{r}
+instacart %>% 
+  count(aisle) %>% 
+  filter(n > 10000) %>% 
+  mutate(
+    aisle = factor(aisle),
+    aisle = fct_reorder(aisle, n)
+  ) %>% 
+  ggplot(aes(x = aisle, y = n)) +
+  geom_point() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+
+Let's make a table!!
+
+```{r}
+instacart %>% 
+  filter(aisle %in% c("baking ingredients", "dog food care", "packaged vegetables fruits")) %>% 
+  group_by(aisle) %>% 
+  count(product_name) %>% 
+  mutate(rank = min_rank(desc(n))) %>% 
+  filter(rank < 4) %>% 
+  arrange(aisle, rank) %>% 
+  knitr::kable()
+```
 
