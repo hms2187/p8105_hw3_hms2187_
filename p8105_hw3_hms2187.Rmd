@@ -1,7 +1,7 @@
 ---
 title: "Homework 3"
 author: "Henry Stoddard"
-date: "9/24/2020"
+date: "10/10/2020"
 output: github_document
 ---
 ## Problem 0
@@ -14,16 +14,19 @@ library(p8105.datasets)
 data("instacart")
 ```
 
-This dataset contains `r nrow(instacart)` rows and ... columns.
-Observations are the level of items in orders by user. There are user / order variables -- user ID, order ID, order day, and order hour. There are also item variables - name, asile, department, and some numeric codes.
+This dataset contains `r nrow(instacart)` rows and `r ncol(instacart)` columns.
+Observations are the level of items in orders by user. There are user / order variables -- user ID, order ID, order day, and order hour. There are also item variables - name, aisle, department, and some numeric codes.
 
 How many aisles and which are most items from?
 
 ```{r}
-instacart %>% count(aisle) %>% arrange(desc(n))
+aisles_df = instacart %>% 
+  count(aisle) %>% 
+  arrange(desc(n))
 ```
+There are `r nrow(aisles_df)` aisles. The most items are ordered from fresh vegetables and fresh fruits.
 
-Making a plot!
+Making a plot that shows number of items ordered in each aisle for aisles with more than 10,000 items ordered!
 ```{r}
 instacart %>% 
   count(aisle) %>% 
@@ -38,7 +41,7 @@ instacart %>%
 ```
 
 Let's make a table!!
-
+This table shows the three most popular items in the baking ingredients, dog food care, and packaged vegetables/fruits aisles, as well as how many times each item was ordered.
 ```{r}
 instacart %>% 
   filter(aisle %in% c("baking ingredients", "dog food care", "packaged vegetables fruits")) %>% 
@@ -51,7 +54,7 @@ instacart %>%
 ```
 
 Apples vs. Ice cream table
-
+This table shows the mean hour of the day at which pink lady apples and coffee ice cream were ordered by day of the week.
 ```{r}
 instacart %>%
   filter(product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) %>%
@@ -69,10 +72,29 @@ Loading and tidying data
 
 ```{r}
 accel_df = read.csv("./data/accel_data.csv") %>% 
-  janitor::clean_names()
+  janitor::clean_names() %>% 
+  pivot_longer(activity_1:activity_1440, names_to = "minute",
+               names_prefix = "activity_", values_to = "activity_count") %>% 
+  mutate(day = factor(day),
+         minute = as.numeric(minute),
+         weekday_weekend = recode(day, "Monday" = "weekday",
+                                  "Tuesday" = "weekday",
+                                  "Wednesday" = "weekday",
+                                  "Thursday" = "weekday",
+                                  "Friday" = "weekday",
+                                  "Saturday" = "weekend",
+                                  "Sunday" = "weekend"))
+```
+This data set is `r nrow(accel_df)` rows long and `r ncol(accel_df)` columns wide. It contains variables on week, day of the week, minute of the day, activity count by minute, and whether the observation is from a weekday or weekend. Day is a factor variable and minute is a numeric variable.
+
+```{r q2 p2}
+accel_df2 = accel_df %>% 
+  group_by(day, day_id) %>%
+  summarise(total_activity = sum(activity_count))%>% ungroup(day, day_id) %>% 
+              mutate(rank = min_rank(desc(total_activity))) %>% 
+  arrange(rank) %>% knitr::kable()
 ```
 
-part 1 also gonna pivot minute of day, make sure its numeric I think?
 
 gonna be more group_by and summary for pt 2. for day of week as column it may start as alphabetical order, so use factor to order correctly
 
