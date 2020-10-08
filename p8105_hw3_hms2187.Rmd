@@ -87,20 +87,47 @@ accel_df = read.csv("./data/accel_data.csv") %>%
 ```
 This data set is `r nrow(accel_df)` rows long and `r ncol(accel_df)` columns wide. It contains variables on week, day of the week, minute of the day, activity count by minute, and whether the observation is from a weekday or weekend. Day is a factor variable and minute is a numeric variable.
 
+Now making a table to show total activity by day of the week, in order from most to least activity.
 ```{r q2 p2}
-accel_df2 = accel_df %>% 
-  group_by(day, day_id) %>%
-  summarise(total_activity = sum(activity_count))%>% ungroup(day, day_id) %>% 
+accel_df %>% 
+  group_by(day) %>%
+  summarise(total_activity = sum(activity_count))%>% 
               mutate(rank = min_rank(desc(total_activity))) %>% 
   arrange(rank) %>% knitr::kable()
 ```
 
+There are no obvious trends. It looks like the end of the week/ weekend days are more active, but it also looks like those days can be the least active, especially Saturday.
 
-gonna be more group_by and summary for pt 2. for day of week as column it may start as alphabetical order, so use factor to order correctly
+Now, I will create a plot that shows the 24 hour activity time courses for each day. Color indicates day of the week.
+```{r q2 p3}
+accel_df %>% 
+  group_by(day) %>% 
+  ggplot(aes(x = minute, y = activity_count, color = day)) +
+  geom_smooth(se = F) +
+  labs(title = "activity count by minute of day by day of week") +
+  theme(legend.position = "bottom")
+```
 
-part3: get minute on x axis and activity count on y axis, then add in scatterplot and geom_line, use color for day of the week. conclusions will probably show stuff about how we sleep at night, active in day, maybe differences by weekday vs weekend
+There are no overtly obvious trends once again. Activity seems to be low in the early morning, spikes around 10am and then again around 8pm, especially on Fridays.
 
 ## Problem 3
+
+```{r q3 import}
+library(p8105.datasets)
+data("ny_noaa")
+ny_noaa %>% select(everything()) %>% summarise_all(funs(sum = sum(is.na(.))))
+```
+The ny_noaa dataset is `r nrow(ny_noaa)` rows long by `r ncol(ny_noaa)` columns wide. The variables include weather station, date of observation, precipitation, snow, snow depth, and min and max temp. Precipitation is in tenths of a millimeter, snow and snow depth are in millimeters, and tmax and tmin are in tenths of a degree celsius. ID and date have no missing values, but the other 5 variables have a lot of missing data.
+
+```{r q3 p1}
+ny_noaa %>% 
+  separate(date, into = c("year", "month", "day"), convert = TRUE) %>% 
+  mutate(prcp = prcp/10,
+         tmax = as.numeric(tmax),
+         tmax = tmax/10,
+         tmin = as.numeric(tmin),
+         tmin = tmin/10)
+```
 
 gonna use count and rank for third sentence of part 1.
 part 2 organize data using group_by station, year, month, and summarize by month(?), also gonna need to filter. use facet to make 2 panel plot. trends could look like global warming!
