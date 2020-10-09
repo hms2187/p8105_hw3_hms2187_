@@ -103,9 +103,9 @@ Now, I will create a plot that shows the 24 hour activity time courses for each 
 ```{r q2 p3}
 accel_df2 = accel_df %>% 
   mutate(day_id = as.factor(day_id)) %>% 
-  group_by(day) %>% 
+  group_by(day_id) %>% 
   ggplot(aes(x = minute, y = activity_count, color = day_id)) +
-  geom_smooth(se = F) +
+  geom_line()+
   labs(title = "activity count by minute of day by day of week") +
   theme(legend.position = "bottom")
 ```
