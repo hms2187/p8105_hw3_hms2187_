@@ -166,7 +166,10 @@ noa_1_plot2 =
   pivot_longer(tmax:tmin, names_to = "Observation",
                values_to = "Tempurature") %>% 
   ggplot(aes(x = Tempurature, fill = Observation))+
-  geom_density(alpha = 0.5)
+  geom_density(alpha = 0.5)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), legend.position = "bottom")+
+  labs(title = "Density of tempurature observations, tmax vs tmin")
+  
 
 noa_1_plot3 = 
   noa_1 %>% 
@@ -175,9 +178,9 @@ noa_1_plot3 =
   mutate(year = as.factor(year)) %>% 
   group_by(year) %>% 
   ggplot(aes(x = snow, y = year))+
-  ggridges::geom_density_ridges()
-
+  ggridges::geom_density_ridges()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), legend.position = "none")+
+  labs(title = "Ridgeplot of snowfall distributions by year", x = "Snow", y = "Year")
+library(patchwork)
 noa_1_plot2 + noa_1_plot3
 ```
-
-part 3 make 2 plots separate and then use patchwork to pull them together. first one should be contour/bin/or hex plot not scatter plot. second plot should be filter step, then showuse violin, box, or ridge plot showing one box per year
